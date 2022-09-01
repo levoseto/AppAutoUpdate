@@ -39,5 +39,11 @@
             Text="Actualiza (ya es de otro color)"
             TextColor="White">
         </Button>
+        <Button
+            x:Name="ftpButton"
+            Clicked="ftpButton_Clicked"
+            Text="Probar conexión FTP"
+            TextColor="White"
+            BackgroundColor="CadetBlue" />
     </StackLayout>
 </ContentPage>

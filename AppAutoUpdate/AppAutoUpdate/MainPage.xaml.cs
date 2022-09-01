@@ -1,13 +1,16 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Xamarin.Forms;
 using Xamarin.Essentials;
+
 using AppAutoUpdate.Interfaces;
-using System.IO;
+using AppAutoUpdate.Services;
 
 namespace AppAutoUpdate
 {
@@ -49,6 +52,22 @@ namespace AppAutoUpdate
         private void Button_Clicked(object sender, EventArgs e)
         {
             ObtieneAPKDisponible();
+        }
+
+        private async void ftpButton_Clicked(object sender, EventArgs e)
+        {
+            IFtpAppConnectionService connectionService = new FtpAppConnectionService();
+            if (connectionService != null)
+            {
+                var resultadoConexion = connectionService.IsConnected();
+                if (resultadoConexion)
+                {
+                    await DisplayAlert("AppAutoUpdate", "Está conectado", "Aceptar");
+                    return;
+                }
+
+                await DisplayAlert("AppAutoUpdate", "No hay conexión al FTP", "Aceptar");
+            }
         }
     }
 }

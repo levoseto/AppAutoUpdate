@@ -14,4 +14,16 @@
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2196" />
     <PackageReference Include="Xamarin.Essentials" Version="1.7.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Rebex.Common">
+      <HintPath>Binaries\Rebex.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Rebex.Ftp">
+      <HintPath>Binaries\Rebex.Ftp.dll</HintPath>
+    </Reference>
+    <Reference Include="Rebex.Networking">
+      <HintPath>Binaries\Rebex.Networking.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>
