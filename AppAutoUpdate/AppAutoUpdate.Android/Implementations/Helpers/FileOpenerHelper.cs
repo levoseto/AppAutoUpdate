@@ -1,5 +1,6 @@
 ﻿using Android.App;
 using Android.Content;
+using Android.Net;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
@@ -21,9 +22,7 @@ namespace AppAutoUpdate.Droid.Implementations.Helpers
         public void OpenApk(string filepath)
         {
             var file = new Java.IO.File(filepath);
-            Intent install = new Intent();
-            Intent chooser = null;
-            install.SetAction(Intent.ActionView);
+            Intent install = new Intent(Intent.ActionView);
 
             // Old Approach
             if (Android.OS.Build.VERSION.SdkInt < BuildVersionCodes.N)
@@ -33,18 +32,14 @@ namespace AppAutoUpdate.Droid.Implementations.Helpers
             }
             else
             {
-                //Android.Net.Uri apkURI = AndroidX.Core.Content.FileProvider.GetUriForFile(Forms.Context, Forms.Context.ApplicationContext.PackageName + ".fileprovider", file);
-                Android.Net.Uri apkURI = AndroidX.Core.Content.FileProvider.GetUriForFile(Platform.CurrentActivity.ApplicationContext, Platform.CurrentActivity.ApplicationContext.PackageName + ".provider", file);
+                Android.Net.Uri apkURI = AndroidX.Core.Content.FileProvider.GetUriForFile(Platform.CurrentActivity.BaseContext, Platform.CurrentActivity.BaseContext.PackageName + ".provider", file);
                 install.SetDataAndType(apkURI, "application/vnd.android.package-archive");
                 install.AddFlags(ActivityFlags.NewTask);
                 install.AddFlags(ActivityFlags.GrantReadUriPermission);
-
-                chooser = Intent.CreateChooser(install, "Desea actualizar?");
-                chooser.AddFlags(ActivityFlags.NewTask);
-                chooser.AddFlags(ActivityFlags.GrantReadUriPermission);
             }
 
-            Android.App.Application.Context.StartActivity(chooser);
+            Platform.OnNewIntent(install);
+            Platform.CurrentActivity.StartActivity(install);
         }
     }
 }
