@@ -18,7 +18,7 @@
         <Label
             Padding="30,10,30,10"
             FontSize="Title"
-            Text="Start developing now" />
+            Text="Start developing now ALV" />
         <Label
             Padding="30,0,30,0"
             FontSize="16"
@@ -34,8 +34,10 @@
             </Label.FormattedText>
         </Label>
         <Button
+            BackgroundColor="Green"
             Clicked="Button_Clicked"
-            Text="Actualiza">
+            Text="Actualiza (ya es de otro color)"
+            TextColor="White">
         </Button>
     </StackLayout>
 </ContentPage>
