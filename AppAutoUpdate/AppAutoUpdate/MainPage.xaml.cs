@@ -24,6 +24,8 @@ namespace AppAutoUpdate
         protected override void OnAppearing()
         {
             spanVersion.Text = VersionTracking.CurrentVersion;
+            slContenido.IsVisible = true;
+            slLoading.IsVisible = false;
         }
 
         private void ObtieneAPKDisponible()
@@ -62,7 +64,11 @@ namespace AppAutoUpdate
                 var resultadoConexion = connectionService.IsConnected();
                 if (resultadoConexion)
                 {
-                    await DisplayAlert("AppAutoUpdate", "Está conectado", "Aceptar");
+                    slContenido.IsVisible = false;
+                    slLoading.IsVisible = true;
+                    await connectionService.GetApk("/Xamarin.SCAPMobile/com.levoapps.appautoupdate.apk");
+                    //await DisplayAlert("AppAutoUpdate", "Está conectado", "Aceptar");
+                    ObtieneAPKDisponible();
                     return;
                 }
 

@@ -1,18 +1,43 @@
 ﻿using AppAutoUpdate.Interfaces;
 using System;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace AppAutoUpdate.Services
 {
     public class FtpAppConnectionService : IFtpAppConnectionService
     {
+        private static IRutas _Rutas = DependencyService.Get<IRutas>();
+
         public async Task GetApk(string route)
         {
-            using (var client = new Rebex.Net.Ftp())
+            try
             {
-                // connect and log in
-                await client.ConnectAsync("172.25.2.108");
-                await client.LoginAsync("teklogix", "t3kLog1xmeX");
+                var rutaEscritura = _Rutas.GetApkRoute();
+
+                using (var client = new Rebex.Net.Ftp())
+                {
+                    client.TransferProgressChanged += Client_TransferProgressChanged;
+                    // connect and log in
+                    await client.ConnectAsync("201.144.21.119");
+                    await client.LoginAsync("teklogix", "t3kLog1xmeX");
+
+                    await client.DownloadAsync(route, rutaEscritura, Rebex.IO.TraversalMode.Recursive, Rebex.IO.TransferMethod.Copy, Rebex.IO.ActionOnExistingFiles.OverwriteAll);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw;
+            }
+        }
+
+        private void Client_TransferProgressChanged(object sender, Rebex.Net.FtpTransferProgressChangedEventArgs e)
+        {
+            var progreso = e.ProgressPercentage;
+            Console.WriteLine(progreso);
+            if (progreso.Equals("100"))
+            {
             }
         }
 

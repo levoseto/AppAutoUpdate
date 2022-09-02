@@ -7,7 +7,7 @@
     <StackLayout>
         <Frame
             Padding="24"
-            BackgroundColor="#2196F3"
+            BackgroundColor="Blue"
             CornerRadius="0">
             <Label
                 FontSize="36"
@@ -15,35 +15,45 @@
                 Text="Welcome to Xamarin.Forms!"
                 TextColor="White" />
         </Frame>
-        <Label
-            Padding="30,10,30,10"
-            FontSize="Title"
-            Text="Start developing now ALV" />
-        <Label
-            Padding="30,0,30,0"
-            FontSize="16"
-            Text="Bienvenido a esta aplicación poderosa y vigorosa" />
-        <Label Padding="30,24,30,0" FontSize="16">
-            <Label.FormattedText>
-                <FormattedString>
-                    <FormattedString.Spans>
-                        <Span Text="Versión:" />
-                        <Span x:Name="spanVersion" FontAttributes="Bold" />
-                    </FormattedString.Spans>
-                </FormattedString>
-            </Label.FormattedText>
-        </Label>
-        <Button
-            BackgroundColor="Green"
-            Clicked="Button_Clicked"
-            Text="Actualiza (ya es de otro color)"
-            TextColor="White">
-        </Button>
-        <Button
-            x:Name="ftpButton"
-            Clicked="ftpButton_Clicked"
-            Text="Probar conexión FTP"
-            TextColor="White"
-            BackgroundColor="CadetBlue" />
+        <StackLayout
+            x:Name="slLoading"
+            HorizontalOptions="CenterAndExpand"
+            VerticalOptions="CenterAndExpand">
+            <ActivityIndicator IsRunning="True" />
+        </StackLayout>
+        <StackLayout
+            x:Name="slContenido"
+            HorizontalOptions="CenterAndExpand">
+            <Label
+                Padding="30,10,30,10"
+                FontSize="Title"
+                Text="Start developing now ALV" />
+            <Label
+                Padding="30,0,30,0"
+                FontSize="16"
+                Text="Bienvenido a esta aplicación poderosa y vigorosa" />
+            <Label Padding="30,24,30,0" FontSize="16">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <FormattedString.Spans>
+                            <Span Text="Versión:" />
+                            <Span x:Name="spanVersion" FontAttributes="Bold" />
+                        </FormattedString.Spans>
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            <Button
+                BackgroundColor="Green"
+                Clicked="Button_Clicked"
+                Text="Actualiza (ya es de otro color)"
+                TextColor="White">
+            </Button>
+            <Button
+                x:Name="ftpButton"
+                Clicked="ftpButton_Clicked"
+                Text="Probar conexión FTP"
+                TextColor="White"
+                BackgroundColor="CadetBlue" />
+        </StackLayout>
     </StackLayout>
 </ContentPage>
