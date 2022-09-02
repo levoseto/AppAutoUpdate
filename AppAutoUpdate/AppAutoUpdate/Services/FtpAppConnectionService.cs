@@ -7,6 +7,7 @@ namespace AppAutoUpdate.Services
 {
     public class FtpAppConnectionService : IFtpAppConnectionService
     {
+        private static readonly string _DireccionFTP = "201.144.21.119";
         private static IRutas _Rutas = DependencyService.Get<IRutas>();
 
         public async Task GetApk(string route)
@@ -19,7 +20,7 @@ namespace AppAutoUpdate.Services
                 {
                     client.TransferProgressChanged += Client_TransferProgressChanged;
                     // connect and log in
-                    await client.ConnectAsync("201.144.21.119");
+                    await client.ConnectAsync(_DireccionFTP);
                     await client.LoginAsync("teklogix", "t3kLog1xmeX");
 
                     await client.DownloadAsync(route, rutaEscritura, Rebex.IO.TraversalMode.Recursive, Rebex.IO.TransferMethod.Copy, Rebex.IO.ActionOnExistingFiles.OverwriteAll);
@@ -46,7 +47,7 @@ namespace AppAutoUpdate.Services
             using (var client = new Rebex.Net.Ftp())
             {
                 // connect and log in
-                client.Connect("172.25.2.108");
+                client.Connect(_DireccionFTP);
                 client.Login("teklogix", "t3kLog1xmeX");
                 return client.IsConnected;
             }
