@@ -7,7 +7,7 @@
     <StackLayout>
         <Frame
             Padding="24"
-            BackgroundColor="Green"
+            BackgroundColor="#1A5680"
             CornerRadius="0">
             <Label
                 FontSize="36"
