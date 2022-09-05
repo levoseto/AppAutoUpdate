@@ -22,7 +22,7 @@ namespace AppAutoUpdate.Droid.Implementations
             return Platform.CurrentActivity.ApplicationContext.PackageName;
         }
 
-        public string GetApkRoute()
+        public string GetApkDataFolderRoute()
         {
             return Application.Context.GetExternalFilesDir(string.Empty).ToString();
         }

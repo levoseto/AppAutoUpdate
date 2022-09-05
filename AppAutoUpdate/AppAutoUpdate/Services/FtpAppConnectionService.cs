@@ -8,13 +8,13 @@ namespace AppAutoUpdate.Services
     public class FtpAppConnectionService : IFtpAppConnectionService
     {
         private static readonly string _DireccionFTP = "201.144.21.119";
-        private static IRutas _Rutas = DependencyService.Get<IRutas>();
+        private static readonly IRutas _Rutas = DependencyService.Get<IRutas>();
 
-        public async Task GetApk(string route)
+        public async Task GetFileAsync(string route)
         {
             try
             {
-                var rutaEscritura = _Rutas.GetApkRoute();
+                var rutaEscritura = _Rutas.GetApkDataFolderRoute();
 
                 using (var client = new Rebex.Net.Ftp())
                 {

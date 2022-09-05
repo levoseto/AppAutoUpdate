@@ -1,21 +1,29 @@
-﻿using System;
+﻿using AppAutoUpdate.Interfaces;
+using AppAutoUpdate.Services;
+
+using AsyncAwaitBestPractices;
+
+using System;
 using System.IO;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-using Xamarin.Forms;
 using Xamarin.Essentials;
-
-using AppAutoUpdate.Interfaces;
-using AppAutoUpdate.Services;
+using Xamarin.Forms;
 
 namespace AppAutoUpdate
 {
     public partial class MainPage : ContentPage
     {
+        private static readonly IFileService _FileService = new FileService();
+        private static readonly IRutas _RutasService = DependencyService.Get<IRutas>();
+        private static readonly IFtpAppConnectionService _FtpConnectionService = new FtpAppConnectionService();
+
+        private static readonly string _RutaEscrituraArchivosApp = _RutasService.GetApkDataFolderRoute();
+        private static readonly string _NombreApk = _RutasService.GetApkName();
+        private static readonly string _Version = VersionTracking.CurrentVersion;
+        private static readonly string _RutaUbicacionFTP = "/Xamarin.SCAPMobile";
+        private static readonly string _NombreArchivoVersion = "AutoUpdateVersion.txt";
+
         public MainPage()
         {
             InitializeComponent();
@@ -23,29 +31,32 @@ namespace AppAutoUpdate
 
         protected override void OnAppearing()
         {
-            spanVersion.Text = VersionTracking.CurrentVersion;
+            spanVersion.Text = _Version;
             slContenido.IsVisible = true;
             slLoading.IsVisible = false;
+
+            GetInfoVersionFile().SafeFireAndForget();
         }
 
         private void ObtieneAPKDisponible()
         {
-            MainThread.BeginInvokeOnMainThread(() =>
+            MainThread.BeginInvokeOnMainThread(async () =>
             {
                 var servicioRutas = DependencyService.Get<IRutas>();
-                var rutaEscritura = servicioRutas.GetApkRoute();
+                var rutaEscritura = servicioRutas.GetApkDataFolderRoute();
                 var nombreApk = servicioRutas.GetApkName();
+
                 if (!string.IsNullOrEmpty(rutaEscritura))
                 {
                     var rutaCompletaApk = Path.Combine(rutaEscritura, $"{nombreApk}.apk");
-                    if (File.Exists(rutaCompletaApk))
+                    if (_FileService.Exists(rutaCompletaApk))
                     {
                         var servicioApk = DependencyService.Get<IFileOpener>();
                         servicioApk.OpenApk(rutaCompletaApk);
                     }
                     else
                     {
-                        App.Current.MainPage.DisplayAlert("Hola", "APK no existe", "Aceptar");
+                        await MessageService.Show("APK no existe");
                     }
                 }
             });
@@ -66,13 +77,52 @@ namespace AppAutoUpdate
                 {
                     slContenido.IsVisible = false;
                     slLoading.IsVisible = true;
-                    await connectionService.GetApk("/Xamarin.SCAPMobile/com.levoapps.appautoupdate.apk");
-                    //await DisplayAlert("AppAutoUpdate", "Está conectado", "Aceptar");
+                    await connectionService.GetFileAsync("/Xamarin.SCAPMobile/com.levoapps.appautoupdate.apk");
                     ObtieneAPKDisponible();
                     return;
                 }
 
                 await DisplayAlert("AppAutoUpdate", "No hay conexión al FTP", "Aceptar");
+            }
+        }
+
+        private async Task GetInfoVersionFile()
+        {
+            try
+            {
+                var rutaFtpArchivoVersion = $"{_RutaUbicacionFTP}/{_NombreArchivoVersion}";
+                var rutaLocalArchivoVersion = $"{_RutaEscrituraArchivosApp}/{_NombreArchivoVersion}";
+                var rutaLocalApk = $"{_RutaEscrituraArchivosApp}/{_NombreApk}";
+
+                if (_FtpConnectionService.IsConnected())
+                {
+                    await _FtpConnectionService.GetFileAsync(rutaFtpArchivoVersion);
+
+                    // Leer archivo de la versión
+                    if (_FileService.Exists(rutaLocalArchivoVersion))
+                    {
+                        var versionObtenidaArchivoLocal = _FileService.Read(rutaLocalArchivoVersion);
+                        if (!versionObtenidaArchivoLocal.Equals(_Version))
+                        {
+                            var versionFloat = float.Parse(_Version);
+                            var versionObtenidaArchivoLocalFloat = float.Parse(versionObtenidaArchivoLocal);
+
+                            if (versionObtenidaArchivoLocalFloat > versionFloat)
+                            {
+                                await MessageService.Show("Hay una nueva versión disponible");
+                                return;
+                            }
+                        }
+
+                        // TODO: Si la versión es igual, siempre eliminar el archivo de versión y el APK si existe descargado.
+                        _FileService.Remove(rutaLocalArchivoVersion);
+                        _FileService.Remove(rutaLocalApk);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
             }
         }
     }

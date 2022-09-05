@@ -9,6 +9,6 @@ namespace AppAutoUpdate.Interfaces
     {
         bool IsConnected();
 
-        Task GetApk(string route);
+        Task GetFileAsync(string route);
     }
 }

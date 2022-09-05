@@ -6,7 +6,7 @@ namespace AppAutoUpdate.Interfaces
 {
     public interface IRutas
     {
-        string GetApkRoute();
+        string GetApkDataFolderRoute();
 
         string GetApkName();
     }
